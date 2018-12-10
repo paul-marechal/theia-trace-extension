@@ -29,20 +29,30 @@ export namespace TraceViewerCommands {
 
 @injectable()
 export class TraceViewerContribution extends WidgetOpenHandler<TraceViewerWidget> implements CommandContribution {
+
+    // The ID makes the link between the widget factory and this widget open handler.
+    readonly id = TraceViewerWidget.ID;
+
+    // Name of the handler that should show in the context menu.
+    readonly label = 'Open trace';
+
+    // Whether or not the URI is handled by the TraceViewer.
+    // Arbitrary number representing the priority for this handler over someone else.
+    canHandle(uri: URI): number {
+        return 100;
+    }
+
+    // At this point, you are given the URI from the file navigator,
+    // this method should use it to do whatever it needs in order to
+    // configure the options passed to the widget.
     protected createWidgetOptions(uri: URI): TraceViewerWidgetOptions {
         return {
             traceURI: uri.path.toString()
         };
     }
 
-    readonly id = TraceViewerWidget.ID;
-    readonly label = 'Open trace';
-
+    // Register a new command (not handled in this case).
     registerCommands(registry: CommandRegistry): void {
         registry.registerCommand(TraceViewerCommands.OPEN);
-    }
-
-    canHandle(uri: URI): number {
-        return 100;
     }
 }
