@@ -23,8 +23,18 @@ import { CommandContribution } from '@theia/core/lib/common';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import '../../src/browser/style/trace-viewer.css';
+import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
+import { TraceManager } from '../common/trace-manager';
 
 export default new ContainerModule(bind => {
+
+    // Lets create a binding for the TspClient so that it can be inject to however needs it!
+    //
+    // Wrong: This will instanciate the client right when this module will be loaded, even if we don't use it.
+    // bind(TspClient).toConstantValue(new TspClient('http://localhost:8080/tsp/api'));
+    //
+    // Good: Similar to lazy loading, the instance will be created only once, and only when needed.
+    bind(TspClient).toDynamicValue(() => new TspClient('http://localhost:8080/tsp/api')).inSingletonScope();
 
     // Someone ask for a `TraceViewerWidget`, then actually give a `TraceViewerWidget` instance.
     // We use the reference to the class as identifier, and we bind this id to the class itself, which will be use to create new objects to resolve dependencies.
