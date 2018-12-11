@@ -44,7 +44,6 @@ export class TraceViewerWidget extends ReactWidget {
 
     protected readonly uri: Path;
     // protected readonly resource: Resource;
-    private traceManager: TraceManager;
     private openedTrace: Trace | undefined;
     private traceInfoText: string = '';
     private tableColumns: Array<any> = new Array();
@@ -58,10 +57,10 @@ export class TraceViewerWidget extends ReactWidget {
 
     constructor(
         @inject(TraceViewerWidgetOptions) protected readonly options: TraceViewerWidgetOptions,
+        @inject(TraceManager) private traceManager: TraceManager,
         @inject(TspClient) private tspClient: TspClient,
     ) {
         super();
-        this.traceManager = TraceManager.getInstance();
         this.uri = new Path(this.options.traceURI);
         this.id = 'theia-traceOpen';
         this.title.label = 'Trace: ' + this.uri.base;

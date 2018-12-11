@@ -18,23 +18,17 @@ import { Trace } from 'tsp-typescript-client/lib/models/trace';
 import { Path } from '@theia/core';
 import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
 import { Query } from 'tsp-typescript-client/lib/models/query/query';
+import { injectable, inject } from 'inversify';
 
+@injectable()
 export class TraceManager {
-    private static instance: TraceManager;
-    private tspClient: TspClient;
 
     private fOpenTraces: Map<string, Trace>;
 
-    private constructor() {
+    private constructor(
+        @inject(TspClient) private tspClient: TspClient,
+    ) {
         this.fOpenTraces = new Map();
-        this.tspClient = new TspClient('http://localhost:8080/tsp/api');
-    }
-
-    static getInstance() {
-        if (!this.instance) {
-            this.instance = new TraceManager();
-        }
-        return this.instance;
     }
 
     getOpenTraces() {

@@ -36,6 +36,9 @@ export default new ContainerModule(bind => {
     // Good: Similar to lazy loading, the instance will be created only once, and only when needed.
     bind(TspClient).toDynamicValue(() => new TspClient('http://localhost:8080/tsp/api')).inSingletonScope();
 
+    // Lets also bind the trace manager
+    bind(TraceManager).toSelf().inSingletonScope();
+
     // Someone ask for a `TraceViewerWidget`, then actually give a `TraceViewerWidget` instance.
     // We use the reference to the class as identifier, and we bind this id to the class itself, which will be use to create new objects to resolve dependencies.
     // In this case, everytime someone asks for this service, a new one is instanciated (not a singleton).
