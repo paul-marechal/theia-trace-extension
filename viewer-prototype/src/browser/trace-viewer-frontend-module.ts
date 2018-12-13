@@ -15,7 +15,7 @@
  ********************************************************************************/
 
 import { ContainerModule, Container } from 'inversify';
-import { WidgetFactory, OpenHandler, FrontendApplicationContribution } from '@theia/core/lib/browser';
+import { WidgetFactory, OpenHandler, FrontendApplicationContribution, WebSocketConnectionProvider } from '@theia/core/lib/browser';
 import { TraceViewerWidget, TraceViewerWidgetOptions } from './trace-viewer-widget';
 import { TraceViewerContribution } from './trace-viewer-contribution';
 import { CommandContribution } from '@theia/core/lib/common';
@@ -25,8 +25,16 @@ import 'ag-grid-community/dist/styles/ag-theme-balham.css';
 import '../../src/browser/style/trace-viewer.css';
 import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
 import { TraceManager } from '../common/trace-manager';
+import { TraceServer, traceServerPath } from '../common/trace-server-protocol';
 
 export default new ContainerModule(bind => {
+
+    // Here we create a proxy to some backend service listening at `traceServerPath`.
+    // This proxy will relay method calls to the proper server in the backend.
+    bind(TraceServer).toDynamicValue(ctx => {
+        const connection = ctx.container.get(WebSocketConnectionProvider);
+        return connection.createProxy<TraceServer>(traceServerPath);
+    }).inSingletonScope();
 
     // Lets create a binding for the TspClient so that it can be inject to however needs it!
     //

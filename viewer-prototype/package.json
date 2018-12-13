@@ -16,6 +16,7 @@
   ],
   "dependencies": {
     "@theia/core": "next",
+    "@theia/workspace": "next",
     "chart.js": "^2.7.2",
     "react-chartjs-2": "^2.7.2",
     "ag-grid-community": "^19.0.0",
@@ -25,7 +26,7 @@
   "devDependencies": {
     "@types/chart.js": "^2.7.40",
     "rimraf": "latest",
-    "typescript": "latest"
+    "typescript": "~2"
   },
   "scripts": {
     "prepare": "yarn run clean && yarn run build",
@@ -35,7 +36,8 @@
   },
   "theiaExtensions": [
     {
-      "frontend": "lib/browser/trace-viewer-frontend-module"
+      "frontend": "lib/browser/trace-viewer-frontend-module",
+      "backend": "lib/node/trace-viewer-backend-module"
     }
   ]
 }

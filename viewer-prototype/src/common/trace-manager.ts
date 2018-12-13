@@ -14,10 +14,10 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { Trace } from 'tsp-typescript-client/lib/models/trace';
 import { Path } from '@theia/core';
-import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
+import { Trace } from 'tsp-typescript-client/lib/models/trace';
 import { Query } from 'tsp-typescript-client/lib/models/query/query';
+import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
 import { injectable, inject } from 'inversify';
 
 @injectable()

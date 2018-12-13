@@ -14,21 +14,31 @@
  * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
  ********************************************************************************/
 
-import { injectable } from 'inversify';
-import { Command, CommandRegistry, CommandContribution } from '@theia/core';
-import { WidgetOpenHandler } from '@theia/core/lib/browser';
+import { injectable, inject } from 'inversify';
 import URI from '@theia/core/lib/common/uri';
+import { WidgetOpenHandler } from '@theia/core/lib/browser';
+import { WorkspaceService } from '@theia/workspace/lib/browser';
+import { Command, CommandRegistry, CommandContribution, MessageService } from '@theia/core';
 import { TraceViewerWidget, TraceViewerWidgetOptions } from './trace-viewer-widget';
+import { TraceServer } from '../common/trace-server-protocol';
 
 export namespace TraceViewerCommands {
     export const OPEN: Command = {
         id: 'trace:open',
         label: 'Open Trace'
     };
+    export const LIST_LOGS: Command = {
+        id: 'trace:list:logs',
+        label: 'List Log Files'
+    }
 }
 
 @injectable()
 export class TraceViewerContribution extends WidgetOpenHandler<TraceViewerWidget> implements CommandContribution {
+
+    @inject(WorkspaceService) protected readonly workspaceService!: WorkspaceService;
+    @inject(MessageService) protected readonly messageService!: MessageService;
+    @inject(TraceServer) protected readonly traceServer!: TraceServer;
 
     // The ID makes the link between the widget factory and this widget open handler.
     readonly id = TraceViewerWidget.ID;
@@ -54,5 +64,16 @@ export class TraceViewerContribution extends WidgetOpenHandler<TraceViewerWidget
     // Register a new command (not handled in this case).
     registerCommands(registry: CommandRegistry): void {
         registry.registerCommand(TraceViewerCommands.OPEN);
+        registry.registerCommand(TraceViewerCommands.LIST_LOGS, {
+            execute: async () => {
+                const roots = await this.workspaceService.roots;
+                const logFiles = await this.traceServer.listLogFiles(
+                    new URI(roots[0].uri).path.toString()
+                );
+                for (const logFile of logFiles) {
+                    this.messageService.info(logFile);
+                }
+            }
+        });
     }
 }
